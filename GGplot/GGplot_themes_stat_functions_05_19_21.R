@@ -21,6 +21,7 @@ ggplot(Data,aes(x=mussels,y=snails))+
 Data<-Data%>%
   #to change order inside the levels vector choose the desired order.
   mutate(tide.height=factor(tide.height,levels=c("low","high")))
+Data$tide.height<-factor(Data$tide.height,levels=c("low","high"))
 #Now plot again
 ggplot(Data,aes(x=mussels,y=snails))+
   geom_point()+
@@ -34,7 +35,7 @@ tide.labs<-c("Low tide","High tide")
 names(tide.labs)<-c("low","high")
 #First make a vector that has the desired labels
 #\n makes a new line
-site.labs<-c("Monterey","Santa Cruz","Half Moon \n Bay")
+site.labs<-c("Monterey","Santa Cruz","Half Moon Bay")
 #now name the vector as the original values
 names(site.labs)<-c("A","B","C")
 #now lets change it
@@ -44,6 +45,7 @@ ggplot(Data,aes(x=mussels,y=snails))+
   #add the labeller to facet grid
   facet_grid(site ~ tide.height,labeller =labeller(tide.height=tide.labs,site=site.labs))
 
+
 # 5. Make facet axes free ----------------------------------------------------------
 #not always but sometimes it makes sense too allow axes scale to vary between 
 baseplot<-ggplot(Data,aes(x=mussels,y=snails))+
@@ -52,11 +54,12 @@ baseplot<-ggplot(Data,aes(x=mussels,y=snails))+
   #by default scales is fixed but you can change it to either
   #"free" for both axes
   #"free_x" for just x axis or "free_y" for just y axis
-  facet_grid(site ~ tide.height,labeller =labeller(tide.height=tide.labs,site=site.labs),scales="free")
+  facet_grid(site ~ tide.height,labeller =labeller(tide.height=tide.labs,site=site.labs))
 
 # 6. bquotes for Math expressions -------------------------------------------------------------
 #bquotes is sort of confusing at first but is useful
 #https://www.r-bloggers.com/2018/03/math-notation-for-r-plot-titles-expression-and-bquote/ is a good tutorial
+
 #strings "string" and are seperated by ~
 #variables are indicated by .(varname)
 #math expression are unquoted
@@ -72,8 +75,8 @@ baseplot+xlab(bquote("Mussels ("~m^-2 ~")"))+
 baseplot+xlab(bquote(frac(Mussels,m^2)))+
   ylab(bquote(frac(Snails,m^2)))
 #let's just save the one plot before we move onto theme custimization 
-plot2<-baseplot+xlab(bquote("Mussels ("~m^-2 ~")"))+
-  ylab(bquote("Snails ("~m^-2 ~")"))
+plot2<-baseplot+xlab(bquote(bold("Mussels ("~m^-2 ~")")))+
+  ylab(bquote(bold("Snails ("~m^-2 ~")")))
 
 # 7. Theme customizations -------------------------------------------------------
 #As we talked about last time we have defualt themes 
@@ -86,10 +89,12 @@ plot2+theme_classic()
 #At least to me it's not very intuitive...google is your friend
 #in general to customize a certain aspect you will always use
 #theme(thing_to_customize=element_xxx(something=yy,somethingelse=zz))
+
 #for example, text is too small let's make all text larger
 #using text will change all of the text
 #to change all text size text=element_text(size=xx)
 ?element_text()
+?theme()
 plot2+theme_classic()+theme(text=element_text(size=12,face="bold"))
 #by defualt text of axis is grey not black, let's change that
 plot2+theme_classic()+theme(text=element_text(size=12,face="bold"),axis.text=element_text(color="black"))
@@ -98,7 +103,8 @@ plot2+theme_classic()+theme(text=element_text(size=12,face="bold"),axis.text=ele
 #need to use element_rect() this time
 plot2+theme_classic()+theme(text=element_text(size=12,face="bold"),axis.text=element_text(color="black"),
                             #must specify fill = NA
-      panel.border =element_rect(color="black",size=1,fill=NA) )
+      panel.border=element_rect(color="black",size=1,fill=NA))
+
 #thats pretty good, but annoying to write that everytime!
 #luckily we can save themes
 mytheme<-theme_classic()+theme(text=element_text(size=12,face="bold"),axis.text=element_text(color="black"),
@@ -120,6 +126,7 @@ basevp<-ggplot(Data,aes(x=tide.height,y=snails,fill=tide.height))+
   facet_grid(. ~ site,labeller =labeller(site=site.labs))+
   xlab("Tide Height")+
   ylab(bquote(bold("Snails ("~m^-2 ~")")))
+basevp
 #let's add mean and sd
 #when it's just one thing being calculated use fun
 #stat_summary(fun=some function,fun.args=xxx,geom="")
@@ -127,12 +134,11 @@ basevp<-ggplot(Data,aes(x=tide.height,y=snails,fill=tide.height))+
 #let's add the mean
 basevp+stat_summary(fun=mean,geom="point") 
 #when its multiple use stat_summary(fun.data=some function,fun.args=xxx)
-basevp+stat_summary(fun.data =mean_se,geom="errorbar",width=0.3)+#and the mean
+basevp+stat_summary(fun.data =mean_se,geom="errorbar")+#and the mean
   stat_summary(fun=mean,geom="point") 
-#by defualt it only shows onoe standard erro, but we can show more by changing fun.args
-basevp+stat_summary(fun.data =mean_se,geom="errorbar",width=0.3,fun.args=list(mult=1.96))+#this makes in 95% CI
-  stat_summary(fun=mean,geom="point")+
-  stat_summary(fun=mean,geom="line") 
+#by defualt it only shows onoe standard error, but we can show more by changing fun.args
+basevp+stat_summary(fun.data =mean_se,geom="errorbar",width=0.3,fun.args=list(mult=1))+#this makes in 95% CI
+  stat_summary(fun=mean,geom="point")
 
 vp<-basevp+stat_summary(fun.data =mean_se,geom="errorbar",width=0.3)+#lets remove the point fromo the legend.
   stat_summary(fun=mean,geom="point",show.legend = F) 
@@ -145,13 +151,14 @@ vp<-basevp+stat_summary(fun.data =mean_se,geom="errorbar",width=0.3)+#lets remov
 #breaks= vector of the order of things
 #labels= what to be shown
 #http://sape.inf.usi.ch/quick-reference/ggplot2/colour
-vp2<-vp+scale_fill_manual(name="Tide Height:",values=c("cyan2","plum3"),breaks=c("low","high"),labels=c("Low","High"))
+vp2<-vp+scale_fill_manual(name="Tide Height:",values=c("cyan2","plum3"),breaks=c("high","low"),labels=c("High","Low"))
+vp2
 #important note...this cannoot change the order of things!
 # 10. Change axis ticks ---------------------------------------------------
 #similar to how we changed color
 #all with the scale_..._...() functions
 #so change discrete x axis:
-vp2+scale_x_discrete(breaks=c("low","high"),labels=c("Low","high"))
+vp2+scale_x_discrete(breaks=c("low","high"),labels=c("Low","High"))
 #change continous y axis
 #limits=c(min,max)
 vp2+scale_y_continuous(breaks=c(0,5,10,15,20),limits=c(0,20))
