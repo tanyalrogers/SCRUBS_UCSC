@@ -1,7 +1,5 @@
 # Practice Problem Solutions
 
-library(dplyr)
-
 # 1.  ---------------------------------------------------------------------
 
 ZerotoNA <- function(x) {
@@ -135,8 +133,7 @@ for(j in 1:ncol(randwalk2)) {
 
 fish <- read.csv("data/groundfish.csv")
 
-gbfish <- filter(fish, Region=="Georges Bank") %>% 
-  select(-YEAR,-Region)
+gbfish <- fish[fish$Region=="Georges Bank",-c(1,2)]
 
 cor(gbfish)
 
