@@ -1,0 +1,32 @@
+---
+title: "Practice Problems"
+author: "Tanya Rogers"
+date: "11/17/2021"
+output: html_document
+---
+
+## Programming Basics
+
+1. Write a function that takes a vector as input and replaces all the 0s with NAs. Test that it works.
+
+2. Write a function that takes a vector as input and replaces all the NAs with 0s. Test that it works.
+
+3. Write a function that multiplies its input by 2, but if the input is not a number, returns the text “not a number”. Test that it works.
+
+4. Put the following dataset into R. Write a function to convert the length data into common units (cm). The function should take as input a single length value (numeric) and a single unit value (character). Write a loop to apply your function to each row of the dataset. 
+
+```
+lengthdata <- data.frame(Length=c(10,11,50,12,NA,0.5,100,0.2),
+                               Units=c("cm","cm","mm","cm",NA,"not recorded","mm","m"))
+```
+
+5. Add another argument to the function in 3, so that you can specify the output units (cm or mm). 
+
+6. Simulate 50 steps of a random walk: y[t+1] = y[t] + e, where e is a normally distributed random variable with mean 0 and variance 1 (see function rnorm()). Start from an initial state of 0. This will require 1 loop. Plot the resulting time series.
+
+7. Simulate 10 different 50-step random walks, starting from the same initial state. This will require 2 loops. Plot the 10 resulting time series on the same plot. For more practice, use base R to make the plot and use a loop to plot all 10 lines.
+
+8. Load the groundfish.csv data and subset just the data from Georges Bank and just the columns containing the species data. If you put the resulting data frame into cor(), you will get a correlation matrix for all the species. Recreate this correlation matrix, but using cor() pairwise between each species column. This will require 2 loops.
+
+9. The function cor.test() not only computes the correlation, it also tests for significance. It can only be used pairwise. Modify your code from 3 to use cor.test() for each pair, and put the resulting p-values into another matrix. It will be helpful to use the str() function on the output of cor.test() to see how to extract information from it.
+
