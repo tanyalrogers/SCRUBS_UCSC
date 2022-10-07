@@ -10,7 +10,7 @@
 # Matthew Kustra 2/4/22
 # 2. Load up libraries -------------------------------------------------------
 library(shiny)
-library(tidyverse)
+library(tidyverse) 
 library(plotly)
 
 
